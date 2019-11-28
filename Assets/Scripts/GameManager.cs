@@ -61,9 +61,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Perfect!");
             UpdateScore();
             NewBlock();
-        }
-
-
+        }      
     }
 
     private void MoveByX()
@@ -94,6 +92,12 @@ public class GameManager : MonoBehaviour
     {
         startDistance *= -1;
         speedBlock *= -1;
+
+        if (Score % 2 == 0)
+        {
+            startDistance *= -1;
+            speedBlock *= -1;
+        }
 
         lastBlock = currentBlock;
         currentBlock = Instantiate(currentBlock);
