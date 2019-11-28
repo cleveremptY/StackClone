@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\GameLoadTrigger.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>D:/Programs/Unity Hub/projects/StackGismart/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

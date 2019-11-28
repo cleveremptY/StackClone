@@ -23,6 +23,11 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
+
+    public void LoadLevel()
+    {
         colorValue = Random.Range(0, 255);
 
         currentBlock.transform.position = new Vector3(startDistance, lastBlock.transform.localScale.y, 0);
@@ -125,7 +130,7 @@ public class GameManager : MonoBehaviour
             currentBlock.transform.position.z);
 
         int positionTemp = 1;
-        if (currentBlock.transform.position.x < 0)
+        if (currentBlock.transform.position.x < lastBlock.transform.position.x)
             positionTemp *= -1;
         blockShard.transform.position = new Vector3(lastBlock.transform.position.x + positionTemp * (currentBlock.transform.localScale.x * 0.5f + blockShard.transform.localScale.x),
             blockShard.transform.position.y,
@@ -151,7 +156,7 @@ public class GameManager : MonoBehaviour
             lastBlock.transform.position.z * 0.5f + currentBlock.transform.position.z * 0.5f);
 
         int positionTemp = 1;
-        if (currentBlock.transform.position.z < 0)
+        if (currentBlock.transform.position.z < lastBlock.transform.position.z)
             positionTemp *= -1;
         blockShard.transform.position = new Vector3(blockShard.transform.position.x,
             blockShard.transform.position.y,
