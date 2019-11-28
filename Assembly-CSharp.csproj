@@ -57,6 +57,10 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\GameLoadTrigger.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GradientBackground.cs" />
+     <Compile Include="Assets\Scripts\RecordManager.cs" />
+     <None Include="Assets\Shaders\GradientBackgroundCore.cginc" />
+     <None Include="Assets\Shaders\GradientBackground.shader" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>D:/Programs/Unity Hub/projects/StackGismart/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>

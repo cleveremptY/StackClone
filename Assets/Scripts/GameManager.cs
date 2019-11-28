@@ -2,16 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
     public Transform gameCamera;
+    public Transform cameraStartPosition;
+
     public Text ScoreText;
 
     public GameObject currentBlock;
     public GameObject lastBlock;
+    public GameObject blocksCategory;
+
+    public GameObject prefabBlock;
 
     public float startDistance;
     public float borderDistance;
@@ -20,14 +26,28 @@ public class GameManager : MonoBehaviour
     private int Score = 0;
     private int colorValue;
 
-    // Start is called before the first frame update
-    void Start()
+    public UnityEvent onGameOver;
+
+    public void NewGame()
     {
-        
+        GameObject newBlocksCategory = new GameObject();
+        Destroy(blocksCategory);
+        blocksCategory = newBlocksCategory;
+
+        lastBlock = Instantiate(prefabBlock);
+        lastBlock.transform.position = new Vector3(0, 0, 0);
+        lastBlock.transform.parent = blocksCategory.transform;
+
+        currentBlock = Instantiate(prefabBlock);
+        currentBlock.transform.position = new Vector3(-20, 0.5f, 0);
+        currentBlock.transform.parent = blocksCategory.transform;
+
+        gameCamera.transform.position = cameraStartPosition.transform.position;
     }
 
     public void LoadLevel()
     {
+        Score = 0;
         colorValue = Random.Range(0, 255);
 
         currentBlock.transform.position = new Vector3(startDistance, lastBlock.transform.localScale.y, 0);
@@ -47,21 +67,40 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            Handheld.Vibrate();
             currentBlock.transform.position = new Vector3((float)Math.Round(currentBlock.transform.position.x, 1),
                 currentBlock.transform.position.y,
                 (float)Math.Round(currentBlock.transform.position.z, 1));
-            
-            if (lastBlock.transform.position.x != currentBlock.transform.position.x ||
-                lastBlock.transform.position.z != currentBlock.transform.position.z)
-                if (Score % 2 == 0)
-                    SplitBlockByX();
+            if (!CheckGameOver())
+            {
+                if (lastBlock.transform.position.x != currentBlock.transform.position.x ||
+                    lastBlock.transform.position.z != currentBlock.transform.position.z)
+                    if (Score % 2 == 0)
+                        SplitBlockByX();
+                    else
+                        SplitBlockByZ();
                 else
-                    SplitBlockByZ();
-            else
-                Debug.Log("Perfect!");
-            UpdateScore();
-            NewBlock();
+                    Debug.Log("Perfect!");
+                UpdateScore();
+                NewBlock();
+            }
         }      
+    }
+
+    private bool CheckGameOver()
+    {
+        if (Math.Abs(currentBlock.transform.position.x) > lastBlock.transform.localScale.x || Math.Abs(currentBlock.transform.position.z) > lastBlock.transform.localScale.z)
+        {
+            currentBlock.AddComponent<Rigidbody>();
+            currentBlock.GetComponent<Rigidbody>().useGravity = true;
+
+            gameCamera.transform.position = new Vector3(-10, gameCamera.transform.position.y - gameCamera.transform.position.y * 0.25f, -10);
+
+            onGameOver.Invoke();
+            return true;
+        }
+        else
+            return false;
     }
 
     private void MoveByX()
@@ -102,6 +141,7 @@ public class GameManager : MonoBehaviour
         lastBlock = currentBlock;
         currentBlock = Instantiate(currentBlock);
         currentBlock.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.HSVToRGB(((colorValue + Score + 1) / 100f) % 1f, 1f, 1f));
+        currentBlock.transform.parent = blocksCategory.transform;
 
         if (Score % 2 == 0)
             currentBlock.transform.position = new Vector3(startDistance,
@@ -120,6 +160,7 @@ public class GameManager : MonoBehaviour
     private void SplitBlockByX()
     {
         GameObject blockShard = Instantiate(currentBlock);
+        blockShard.transform.parent = blocksCategory.transform;
 
         blockShard.transform.localScale = new Vector3(Math.Abs(lastBlock.transform.position.x - blockShard.transform.position.x), 
             blockShard.transform.localScale.y, 
@@ -146,6 +187,7 @@ public class GameManager : MonoBehaviour
     private void SplitBlockByZ()
     {
         GameObject blockShard = Instantiate(currentBlock);
+        blockShard.transform.parent = blocksCategory.transform;
 
         blockShard.transform.localScale = new Vector3(blockShard.transform.localScale.x, 
             blockShard.transform.localScale.y,
