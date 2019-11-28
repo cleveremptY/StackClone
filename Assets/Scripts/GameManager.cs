@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public void NewGame()
     {
         GameObject newBlocksCategory = new GameObject();
+        newBlocksCategory.name = "Blocks";
         Destroy(blocksCategory);
         blocksCategory = newBlocksCategory;
 
@@ -42,7 +43,9 @@ public class GameManager : MonoBehaviour
         currentBlock.transform.position = new Vector3(-20, 0.5f, 0);
         currentBlock.transform.parent = blocksCategory.transform;
 
-        gameCamera.transform.position = cameraStartPosition.transform.position;
+        gameCamera.GetComponent<CameraMove>().SetNewCameraPosition(cameraStartPosition.transform.position);
+        gameCamera.GetComponent<CameraMove>().ActivateMove();
+
     }
 
     public void LoadLevel()
@@ -68,9 +71,9 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Handheld.Vibrate();
-            currentBlock.transform.position = new Vector3((float)Math.Round(currentBlock.transform.position.x, 1),
-                currentBlock.transform.position.y,
-                (float)Math.Round(currentBlock.transform.position.z, 1));
+            //currentBlock.transform.position = new Vector3((float)Math.Round(currentBlock.transform.position.x, 1),
+            //    currentBlock.transform.position.y,
+            //    (float)Math.Round(currentBlock.transform.position.z, 1));
             if (!CheckGameOver())
             {
                 if (lastBlock.transform.position.x != currentBlock.transform.position.x ||
@@ -94,8 +97,8 @@ public class GameManager : MonoBehaviour
             currentBlock.AddComponent<Rigidbody>();
             currentBlock.GetComponent<Rigidbody>().useGravity = true;
 
-            gameCamera.transform.position = new Vector3(-10, gameCamera.transform.position.y - gameCamera.transform.position.y * 0.25f, -10);
-
+            gameCamera.GetComponent<CameraMove>().SetNewCameraPosition(new Vector3(-10, gameCamera.transform.position.y - gameCamera.transform.position.y * 0.25f, -10));
+            gameCamera.GetComponent<CameraMove>().ActivateMove();
             onGameOver.Invoke();
             return true;
         }
@@ -152,9 +155,10 @@ public class GameManager : MonoBehaviour
                 currentBlock.transform.position.y + lastBlock.transform.localScale.y,
                 startDistance);
 
-        gameCamera.position = new Vector3(lastBlock.transform.position.x - 7,
-            gameCamera.position.y + lastBlock.transform.localScale.y,
-            lastBlock.transform.position.z - 7);
+        gameCamera.GetComponent<CameraMove>().SetNewCameraPosition(new Vector3(lastBlock.transform.position.x - 7,
+                                                                    gameCamera.position.y + lastBlock.transform.localScale.y,
+                                                                    lastBlock.transform.position.z - 7));
+        gameCamera.GetComponent<CameraMove>().ActivateMove();
     }
 
     private void SplitBlockByX()
