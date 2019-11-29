@@ -901,8 +901,8 @@ MonoBehaviour:
   prefabBlock: {fileID: 1323708967484748830, guid: e959ca0cbf75c374ba57e1f4b8d562ec,
     type: 3}
   startDistance: -20
-  borderDistance: 10
-  speedBlock: 1
+  borderDistance: 6
+  speedBlock: 1.6
   onGameOver:
     m_PersistentCalls:
       m_Calls:
