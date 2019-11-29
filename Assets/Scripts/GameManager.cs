@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     public Transform gameCamera;
     public Transform cameraStartPosition;
+    public float baseCameraSize = 7;
 
     public Text ScoreText;
 
@@ -23,13 +24,26 @@ public class GameManager : MonoBehaviour
     public float borderDistance;
     public float speedBlock = 10f;
 
+    public UnityEvent onGameOver;
+
     private int Score = 0;
     private int colorValue;
 
-    public UnityEvent onGameOver;
+    private Color correctColor
+    {
+        get
+        {
+            return Color.HSVToRGB(((colorValue + Score + 1) / 100f) % 1f, 1f, 1f);
+        }
+    }
 
+
+    //Создание необъходимых объектов
     public void NewGame()
     {
+        gameCamera.GetComponent<CameraMove>().SetNewCameraSize(baseCameraSize);
+        gameCamera.GetComponent<CameraMove>().ActivateResize();
+
         GameObject newBlocksCategory = new GameObject();
         newBlocksCategory.name = "Blocks";
         Destroy(blocksCategory);
@@ -42,12 +56,9 @@ public class GameManager : MonoBehaviour
         currentBlock = Instantiate(prefabBlock);
         currentBlock.transform.position = new Vector3(-20, 0.5f, 0);
         currentBlock.transform.parent = blocksCategory.transform;
-
-        gameCamera.GetComponent<CameraMove>().SetNewCameraPosition(cameraStartPosition.transform.position);
-        gameCamera.GetComponent<CameraMove>().ActivateMove();
-
     }
 
+    //Начальная установка параметров для объектов
     public void LoadLevel()
     {
         Score = 0;
@@ -56,10 +67,12 @@ public class GameManager : MonoBehaviour
         currentBlock.transform.position = new Vector3(startDistance, lastBlock.transform.localScale.y, 0);
 
         lastBlock.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.HSVToRGB(((colorValue + Score) / 100f) % 1f, 1f, 1f));
-        currentBlock.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.HSVToRGB(((colorValue + Score + 1) / 100f) % 1f, 1f, 1f));
+        currentBlock.GetComponent<MeshRenderer>().material.SetColor("_Color", correctColor);
+
+        gameCamera.GetComponent<CameraMove>().SetNewCameraPosition(cameraStartPosition.transform.position);
+        gameCamera.GetComponent<CameraMove>().ActivateMove();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Score % 2 == 0)
@@ -67,13 +80,10 @@ public class GameManager : MonoBehaviour
         else
             MoveByZ();
 
-
         if (Input.GetMouseButtonDown(0))
         {
-            Handheld.Vibrate();
-            //currentBlock.transform.position = new Vector3((float)Math.Round(currentBlock.transform.position.x, 1),
-            //    currentBlock.transform.position.y,
-            //    (float)Math.Round(currentBlock.transform.position.z, 1));
+            Vibration.Vibrate(55);
+
             if (!CheckGameOver())
             {
                 if (lastBlock.transform.position.x != currentBlock.transform.position.x ||
@@ -84,7 +94,9 @@ public class GameManager : MonoBehaviour
                         SplitBlockByZ();
                 else
                     Debug.Log("Perfect!");
+
                 UpdateScore();
+
                 NewBlock();
             }
         }      
@@ -92,13 +104,18 @@ public class GameManager : MonoBehaviour
 
     private bool CheckGameOver()
     {
-        if (Math.Abs(currentBlock.transform.position.x) > lastBlock.transform.localScale.x || Math.Abs(currentBlock.transform.position.z) > lastBlock.transform.localScale.z)
+        if (Math.Abs(currentBlock.transform.position.x - lastBlock.transform.position.x) >= lastBlock.transform.localScale.x||
+            Math.Abs(currentBlock.transform.position.z - lastBlock.transform.position.z) >= lastBlock.transform.localScale.z)
         {
             currentBlock.AddComponent<Rigidbody>();
             currentBlock.GetComponent<Rigidbody>().useGravity = true;
 
             gameCamera.GetComponent<CameraMove>().SetNewCameraPosition(new Vector3(-10, gameCamera.transform.position.y - gameCamera.transform.position.y * 0.25f, -10));
             gameCamera.GetComponent<CameraMove>().ActivateMove();
+
+            gameCamera.GetComponent<CameraMove>().SetNewCameraSize(baseCameraSize + Score * 0.25f);
+            gameCamera.GetComponent<CameraMove>().ActivateResize();
+
             onGameOver.Invoke();
             return true;
         }
@@ -143,8 +160,9 @@ public class GameManager : MonoBehaviour
 
         lastBlock = currentBlock;
         currentBlock = Instantiate(currentBlock);
-        currentBlock.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.HSVToRGB(((colorValue + Score + 1) / 100f) % 1f, 1f, 1f));
+        currentBlock.GetComponent<MeshRenderer>().material.SetColor("_Color", correctColor);
         currentBlock.transform.parent = blocksCategory.transform;
+        currentBlock.name = "Block" + Score.ToString();
 
         if (Score % 2 == 0)
             currentBlock.transform.position = new Vector3(startDistance,
@@ -165,6 +183,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject blockShard = Instantiate(currentBlock);
         blockShard.transform.parent = blocksCategory.transform;
+        blockShard.name = "BlockShard" + Score.ToString();
 
         blockShard.transform.localScale = new Vector3(Math.Abs(lastBlock.transform.position.x - blockShard.transform.position.x), 
             blockShard.transform.localScale.y, 
@@ -184,6 +203,7 @@ public class GameManager : MonoBehaviour
         blockShard.transform.position = new Vector3(lastBlock.transform.position.x + positionTemp * (currentBlock.transform.localScale.x * 0.5f + blockShard.transform.localScale.x),
             blockShard.transform.position.y,
             blockShard.transform.position.z);
+
         blockShard.AddComponent<Rigidbody>();
         blockShard.GetComponent<Rigidbody>().useGravity = true;
     }
@@ -192,6 +212,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject blockShard = Instantiate(currentBlock);
         blockShard.transform.parent = blocksCategory.transform;
+        blockShard.name = "BlockShard" + Score.ToString();
 
         blockShard.transform.localScale = new Vector3(blockShard.transform.localScale.x, 
             blockShard.transform.localScale.y,
@@ -211,6 +232,7 @@ public class GameManager : MonoBehaviour
         blockShard.transform.position = new Vector3(blockShard.transform.position.x,
             blockShard.transform.position.y,
             lastBlock.transform.position.z + positionTemp * (currentBlock.transform.localScale.z * 0.5f + blockShard.transform.localScale.z)); ;
+
         blockShard.AddComponent<Rigidbody>();
         blockShard.GetComponent<Rigidbody>().useGravity = true;
     }

@@ -60,6 +60,7 @@
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\GradientBackground.cs" />
      <Compile Include="Assets\Scripts\RecordManager.cs" />
+     <Compile Include="Assets\Scripts\Vibration.cs" />
      <None Include="Assets\Shaders\GradientBackgroundCore.cginc" />
      <None Include="Assets\Shaders\GradientBackground.shader" />
  <Reference Include="Unity.Timeline.Editor">
