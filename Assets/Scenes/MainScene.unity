@@ -233,7 +233,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.16100001, y: 0.7434969}
   m_AnchorMax: {x: 0.8755358, y: 0.7997485}
-  m_AnchoredPosition: {x: 1, y: 0.55581665}
+  m_AnchoredPosition: {x: 1, y: 0.55578613}
   m_SizeDelta: {x: 0, y: -0.45999527}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &273621396
@@ -662,7 +662,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -893,7 +893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameCamera: {fileID: 963194228}
   cameraStartPosition: {fileID: 292915915}
-  baseCameraSize: 7
+  baseCameraSize: 8
   ScoreText: {fileID: 2086152771}
   currentBlock: {fileID: 0}
   lastBlock: {fileID: 0}
@@ -1258,7 +1258,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.16100001, y: 0.66800004}
   m_AnchorMax: {x: 0.8755358, y: 0.74350005}
-  m_AnchoredPosition: {x: 1, y: 0.22579956}
+  m_AnchoredPosition: {x: 1, y: 0.22576904}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2086152771
@@ -1339,7 +1339,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.22499084}
+  m_AnchoredPosition: {x: 0, y: -0.22497559}
   m_SizeDelta: {x: 0, y: -0.54999}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2136322499
